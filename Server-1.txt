@@ -1,0 +1,78 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+//package javaapplication8;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Server {
+
+    private static ServerSocket server = null;
+    private static Socket socket = null;
+    private static final int port = 8085;
+
+    public static void main(String[] args) {
+        //Create IO Objects
+        BufferedReader get = null;
+        PrintWriter put = null;
+        Scanner consoleInput = new Scanner(System.in);
+        //Start Server
+        try {
+            System.out.println("Server is starting ...");
+            server = new ServerSocket(port);
+            System.out.println("Server has started");
+        } catch (IOException e) {
+            System.out.println("Can not listen to port: " + port);
+            System.exit(-1);
+        }
+
+        while (true) {
+        //Create Socket
+            try {
+                socket = server.accept();
+                System.out.println("Client has been connected\n");
+            } catch (IOException e) {
+                System.out.println("Communication Error with Client\n");
+                System.exit(-1);
+            }
+
+            try {
+                get = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                put = new PrintWriter(socket.getOutputStream(), true);
+                put.println("CSE438 LAB, Section 2 Server");
+                System.out.println("Client Name: " + get.readLine());
+                while (socket.isConnected()) {
+                    
+					String clientInput = get.readLine();
+					int input = Integer.parseInt(clientInput);
+					System.out.println(input);
+
+
+                    	if(input == 438) {
+                    		put.println("A");
+                    	} else if (input == 445) {
+                    		put.println("A-");
+                    	} else if (input == 440) {
+                    		put.println("B+");
+                    	} else {
+                    		put.println("Invalid");
+                    	}
+
+                }
+
+            } catch (IOException e) {
+                System.out.print("Client Left");
+                consoleInput.close();
+            }
+
+        }
+    }
+}
